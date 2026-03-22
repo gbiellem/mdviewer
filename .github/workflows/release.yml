@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        rid: [osx-arm64, osx-x64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          dotnet-quality: 'preview'
+
+      - name: Publish
+        run: |
+          dotnet publish src/MdView/MdView.csproj \
+            -c Release \
+            -r ${{ matrix.rid }} \
+            --self-contained true \
+            -p:PublishTrimmed=true \
+            -p:TrimMode=link \
+            -o out
+
+      - name: Create app bundle
+        run: |
+          APP="MdView.app"
+          mkdir -p "$APP/Contents/MacOS"
+          mkdir -p "$APP/Contents/Resources"
+          cp publish/MdView.app/Contents/Info.plist "$APP/Contents/"
+          cp publish/MdView.app/Contents/Resources/mdview-icon.icns "$APP/Contents/Resources/"
+          cp -R out/* "$APP/Contents/MacOS/"
+
+          # Create zip preserving symlinks and permissions
+          zip -ry "MdView-${{ matrix.rid }}.zip" "$APP"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MdView-${{ matrix.rid }}
+          path: MdView-${{ matrix.rid }}.zip
+
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        rid: [win-x64, win-arm64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          dotnet-quality: 'preview'
+
+      - name: Publish
+        run: |
+          dotnet publish src/MdView/MdView.csproj `
+            -c Release `
+            -r ${{ matrix.rid }} `
+            --self-contained true `
+            -p:PublishTrimmed=true `
+            -p:TrimMode=link `
+            -o out
+
+      - name: Create zip
+        run: Compress-Archive -Path out/* -DestinationPath MdView-${{ matrix.rid }}.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MdView-${{ matrix.rid }}
+          path: MdView-${{ matrix.rid }}.zip
+
+  release:
+    needs: [build-macos, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: artifacts/*.zip

@@ -28,6 +28,13 @@
                     <NativeMenuItem Header="Export to PDF..." Click="OnNativeExportPdfClick" Gesture="Cmd+E" />
                 </NativeMenu>
             </NativeMenuItem>
+            <NativeMenuItem Header="View">
+                <NativeMenu>
+                    <NativeMenuItem Header="Zoom In" Click="OnNativeZoomIn" Gesture="Cmd++" />
+                    <NativeMenuItem Header="Zoom Out" Click="OnNativeZoomOut" Gesture="Cmd+-" />
+                    <NativeMenuItem Header="Reset Zoom" Click="OnNativeZoomReset" Gesture="Cmd+0" />
+                </NativeMenu>
+            </NativeMenuItem>
         </NativeMenu>
     </NativeMenu.Menu>
 

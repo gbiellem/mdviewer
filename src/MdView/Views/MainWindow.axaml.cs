@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using System.Windows.Input;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -25,6 +26,15 @@ public partial class MainWindow : Window
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             WindowMenu.IsVisible = false;
+
+            // Register keyboard shortcuts since hidden menu HotKeys are inactive
+            KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.O, KeyModifiers.Meta), Command = new ActionCommand(async () => await OpenFileAsync()) });
+            KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.E, KeyModifiers.Meta | KeyModifiers.Shift), Command = new ActionCommand(OpenInEditor) });
+            KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.P, KeyModifiers.Meta), Command = new ActionCommand(PrintContent) });
+            KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.E, KeyModifiers.Meta), Command = new ActionCommand(async () => await ExportPdfAsync()) });
+            KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.OemPlus, KeyModifiers.Meta), Command = new ActionCommand(ZoomIn) });
+            KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.OemMinus, KeyModifiers.Meta), Command = new ActionCommand(ZoomOut) });
+            KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.D0, KeyModifiers.Meta), Command = new ActionCommand(ResetZoom) });
         }
 
         WebView.AdapterCreated += (_, _) =>
@@ -197,17 +207,23 @@ public partial class MainWindow : Window
 
     private void OnAboutClick(object? sender, RoutedEventArgs e) => App.ShowAboutWindow();
 
-    private void OnZoomIn(object? sender, RoutedEventArgs e)
+    private void OnZoomIn(object? sender, RoutedEventArgs e) => ZoomIn();
+    private void OnNativeZoomIn(object? sender, EventArgs e) => ZoomIn();
+    private void ZoomIn()
     {
         if (_webViewReady) _ = WebView.InvokeScript("setZoom(getZoom() + 0.1)");
     }
 
-    private void OnZoomOut(object? sender, RoutedEventArgs e)
+    private void OnZoomOut(object? sender, RoutedEventArgs e) => ZoomOut();
+    private void OnNativeZoomOut(object? sender, EventArgs e) => ZoomOut();
+    private void ZoomOut()
     {
         if (_webViewReady) _ = WebView.InvokeScript("setZoom(getZoom() - 0.1)");
     }
 
-    private void OnZoomReset(object? sender, RoutedEventArgs e)
+    private void OnZoomReset(object? sender, RoutedEventArgs e) => ResetZoom();
+    private void OnNativeZoomReset(object? sender, EventArgs e) => ResetZoom();
+    private void ResetZoom()
     {
         if (_webViewReady) _ = WebView.InvokeScript("setZoom(1.0)");
     }
@@ -249,5 +265,14 @@ public partial class MainWindow : Window
                 }
             }
         }
+    }
+
+    private sealed class ActionCommand(Action action) : ICommand
+    {
+#pragma warning disable CS0067
+        public event EventHandler? CanExecuteChanged;
+#pragma warning restore CS0067
+        public bool CanExecute(object? parameter) => true;
+        public void Execute(object? parameter) => action();
     }
 }
