@@ -38,8 +38,8 @@ jobs:
           APP="MdView.app"
           mkdir -p "$APP/Contents/MacOS"
           mkdir -p "$APP/Contents/Resources"
-          cp publish/MdView.app/Contents/Info.plist "$APP/Contents/"
-          cp publish/MdView.app/Contents/Resources/mdview-icon.icns "$APP/Contents/Resources/"
+          cp packaging/macos/MdView.app/Contents/Info.plist "$APP/Contents/"
+          cp packaging/macos/MdView.app/Contents/Resources/mdview-icon.icns "$APP/Contents/Resources/"
           cp -R out/* "$APP/Contents/MacOS/"
 
           # Create zip preserving symlinks and permissions
