@@ -9,7 +9,7 @@
         CanResize="False"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
-        SystemDecorations="Full">
+        WindowDecorations="Full">
 
     <StackPanel Margin="24" Spacing="16">
         <TextBlock Text="Default Editor" FontSize="15" FontWeight="SemiBold" />

@@ -13,6 +13,7 @@ public partial class MainWindow : Window
 {
     private bool _webViewReady;
     private string? _pendingHtml;
+    private string? _tempHtmlPath;
 
     public MainWindow()
     {
@@ -33,7 +34,7 @@ public partial class MainWindow : Window
             {
                 var html = _pendingHtml;
                 _pendingHtml = null;
-                Dispatcher.UIThread.Post(() => WebView.NavigateToString(html));
+                Dispatcher.UIThread.Post(() => NavigateToHtml(html));
             }
         };
     }
@@ -65,12 +66,22 @@ public partial class MainWindow : Window
 
         if (_webViewReady)
         {
-            WebView.NavigateToString(html);
+            NavigateToHtml(html);
         }
         else
         {
             _pendingHtml = html;
         }
+    }
+
+    private void NavigateToHtml(string html)
+    {
+        // Write HTML to a temp file and navigate to it so that file:// script
+        // references (e.g. mermaid.min.js) work correctly. NavigateToString
+        // uses an about:blank origin that blocks local file access.
+        _tempHtmlPath ??= Path.Combine(Path.GetTempPath(), $"mdview_{Environment.ProcessId}.html");
+        File.WriteAllText(_tempHtmlPath, html);
+        WebView.Navigate(new Uri(_tempHtmlPath));
     }
 
     // --- File open handlers ---
@@ -186,29 +197,43 @@ public partial class MainWindow : Window
 
     private void OnAboutClick(object? sender, RoutedEventArgs e) => App.ShowAboutWindow();
 
-    private void OnToggleDarkMode(object? sender, RoutedEventArgs e)
+    private void OnZoomIn(object? sender, RoutedEventArgs e)
     {
-        if (DataContext is MainWindowViewModel vm)
-            vm.IsDarkMode = !vm.IsDarkMode;
+        if (_webViewReady) _ = WebView.InvokeScript("setZoom(getZoom() + 0.1)");
+    }
+
+    private void OnZoomOut(object? sender, RoutedEventArgs e)
+    {
+        if (_webViewReady) _ = WebView.InvokeScript("setZoom(getZoom() - 0.1)");
+    }
+
+    private void OnZoomReset(object? sender, RoutedEventArgs e)
+    {
+        if (_webViewReady) _ = WebView.InvokeScript("setZoom(1.0)");
     }
 
     private void OnExitClick(object? sender, RoutedEventArgs e) => Close();
 
+    protected override void OnClosed(EventArgs e)
+    {
+        base.OnClosed(e);
+        if (_tempHtmlPath != null)
+        {
+            try { File.Delete(_tempHtmlPath); } catch { }
+        }
+    }
+
     private void OnDragOver(object? sender, DragEventArgs e)
     {
-#pragma warning disable CS0618
-        e.DragEffects = e.Data.Contains(DataFormats.Files)
+        e.DragEffects = e.DataTransfer.Contains(DataFormat.File)
             ? DragDropEffects.Copy
             : DragDropEffects.None;
-#pragma warning restore CS0618
     }
 
     private void OnDrop(object? sender, DragEventArgs e)
     {
-#pragma warning disable CS0618
-        if (!e.Data.Contains(DataFormats.Files)) return;
-        var files = e.Data.GetFiles();
-#pragma warning restore CS0618
+        if (!e.DataTransfer.Contains(DataFormat.File)) return;
+        var files = e.DataTransfer.TryGetFiles();
         if (files == null) return;
 
         foreach (var file in files)

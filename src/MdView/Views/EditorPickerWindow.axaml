@@ -10,7 +10,7 @@
         CanResize="False"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False"
-        SystemDecorations="Full">
+        WindowDecorations="Full">
 
     <Window.Resources>
         <!-- macOS-style ListBoxItem: full-row rounded highlight, no accent bar -->

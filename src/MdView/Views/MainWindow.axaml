@@ -36,14 +36,14 @@
         <Menu DockPanel.Dock="Top" x:Name="WindowMenu">
             <MenuItem Header="_File">
                 <MenuItem Header="_Open..." Click="OnOpenClick"
-                          InputGesture="Ctrl+O" />
+                          HotKey="Ctrl+O" InputGesture="Ctrl+O" />
                 <MenuItem Header="Open in _Editor" Click="OnOpenInEditorClick"
                           IsEnabled="{Binding HasFile}"
-                          InputGesture="Ctrl+Shift+E" />
+                          HotKey="Ctrl+Shift+E" InputGesture="Ctrl+Shift+E" />
                 <Separator />
                 <MenuItem Header="_Print..." Click="OnPrintClick"
                           IsEnabled="{Binding HasFile}"
-                          InputGesture="Ctrl+P" />
+                          HotKey="Ctrl+P" InputGesture="Ctrl+P" />
                 <MenuItem Header="Export to _PDF..." Click="OnExportPdfClick"
                           IsEnabled="{Binding HasFile}" />
                 <Separator />
@@ -53,7 +53,12 @@
                 <MenuItem Header="_Settings..." Click="OnPreferencesClick" />
             </MenuItem>
             <MenuItem Header="_View">
-                <MenuItem Header="_Dark Mode" Click="OnToggleDarkMode" />
+                <MenuItem Header="Zoom _In" Click="OnZoomIn"
+                          HotKey="Ctrl+OemPlus" InputGesture="Ctrl+OemPlus" />
+                <MenuItem Header="Zoom _Out" Click="OnZoomOut"
+                          HotKey="Ctrl+OemMinus" InputGesture="Ctrl+OemMinus" />
+                <MenuItem Header="_Reset Zoom" Click="OnZoomReset"
+                          HotKey="Ctrl+D0" InputGesture="Ctrl+D0" />
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_About MdView" Click="OnAboutClick" />

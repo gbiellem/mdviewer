@@ -26,9 +26,6 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty]
     private bool _hasFile;
 
-    [ObservableProperty]
-    private bool _isDarkMode;
-
     private string _currentMarkdown = string.Empty;
 
     public MainWindowViewModel()
@@ -51,7 +48,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 </p>
             </div>
             """;
-        HtmlContent = HtmlTemplate.Wrap(welcomeHtml, IsDarkMode);
+        HtmlContent = HtmlTemplate.Wrap(welcomeHtml);
     }
 
     public void LoadFile(string filePath)
@@ -71,7 +68,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
     private void RenderMarkdown()
     {
-        HtmlContent = _markdownService.BuildFullHtml(_currentMarkdown, IsDarkMode);
+        HtmlContent = _markdownService.BuildFullHtml(_currentMarkdown);
     }
 
     private void OnFileChanged(string filePath)
@@ -89,14 +86,6 @@ public partial class MainWindowViewModel : ViewModelBase
                 // File might be locked during write
             }
         });
-    }
-
-    partial void OnIsDarkModeChanged(bool value)
-    {
-        if (!string.IsNullOrEmpty(_currentMarkdown))
-            RenderMarkdown();
-        else
-            ShowWelcomePage();
     }
 
     public void LoadFromArgs(string[] args)

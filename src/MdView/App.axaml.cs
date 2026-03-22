@@ -1,13 +1,7 @@
-using System.Linq;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using FluentAvalonia.Styling;
 using MdView.ViewModels;
 using MdView.Views;
 
@@ -23,18 +17,6 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        var theme = new FluentAvaloniaTheme
-        {
-            PreferSystemTheme = true
-        };
-
-        // Use macOS system blue instead of FluentAvalonia's default purple
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-        {
-            theme.CustomAccentColor = Color.Parse("#007AFF");
-        }
-
-        Styles.Add(theme);
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -65,10 +47,6 @@ public partial class App : Application
             {
                 activatable.Activated += OnActivated;
             }
-
-#pragma warning disable CS0618
-            UrlsOpened += OnUrlsOpened;
-#pragma warning restore CS0618
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -122,18 +100,6 @@ public partial class App : Application
         }
     }
 
-    private void OnUrlsOpened(object? sender, UrlOpenedEventArgs args)
-    {
-        foreach (var url in args.Urls)
-        {
-            if (Uri.TryCreate(url, UriKind.Absolute, out var uri) && uri.IsFile && File.Exists(uri.LocalPath))
-            {
-                LoadFileFromExternalEvent(uri.LocalPath);
-                break;
-            }
-        }
-    }
-
     private void OnAboutClick(object? sender, EventArgs e) => ShowAboutWindow();
 
     private void OnPreferencesClick(object? sender, EventArgs e) => ShowPreferencesWindow();
@@ -168,13 +134,9 @@ public partial class App : Application
         }
     }
 
-    private void DisableAvaloniaDataAnnotationValidation()
+    private static void DisableAvaloniaDataAnnotationValidation()
     {
-        var dataValidationPluginsToRemove =
-            BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
-        foreach (var plugin in dataValidationPluginsToRemove)
-        {
-            BindingPlugins.DataValidators.Remove(plugin);
-        }
+        // In Avalonia 12, data annotation validation is no longer a plugin-based system.
+        // This method is kept as a no-op for future reference.
     }
 }

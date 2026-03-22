@@ -2,27 +2,27 @@ namespace MdView.Services;
 
 public static class HtmlTemplate
 {
-    private static string? _mermaidJs;
+    private static string? _mermaidJsUri;
 
     /// <summary>
-    /// Loads the bundled mermaid.min.js content once and caches it.
+    /// Returns a file:// URI to the bundled mermaid.min.js, or empty if not found.
     /// </summary>
-    public static string GetMermaidJs()
+    public static string GetMermaidJsUri()
     {
-        if (_mermaidJs != null) return _mermaidJs;
+        if (_mermaidJsUri != null) return _mermaidJsUri;
 
         var appDir = AppContext.BaseDirectory;
         var mermaidPath = Path.Combine(appDir, "Assets", "mermaid.min.js");
         if (File.Exists(mermaidPath))
         {
-            _mermaidJs = File.ReadAllText(mermaidPath);
+            _mermaidJsUri = new Uri(mermaidPath).AbsoluteUri;
         }
         else
         {
-            _mermaidJs = ""; // Graceful fallback if not found
+            _mermaidJsUri = ""; // Graceful fallback if not found
         }
 
-        return _mermaidJs;
+        return _mermaidJsUri;
     }
 
     private const string Template = """
@@ -155,7 +155,19 @@ public static class HtmlTemplate
                 }
             </style>
             <!--MERMAID_SCRIPT-->
-            <script>document.addEventListener('contextmenu', e => e.preventDefault());</script>
+            <script>
+                document.addEventListener('contextmenu', e => e.preventDefault());
+                // Unified zoom: intercept Ctrl+wheel so WebView2's native zoom doesn't fight ours
+                let _zoom = 1.0;
+                function setZoom(z) { _zoom = Math.min(5, Math.max(0.25, z)); document.body.style.zoom = _zoom; }
+                function getZoom() { return _zoom; }
+                document.addEventListener('wheel', e => {
+                    if (e.ctrlKey) {
+                        e.preventDefault();
+                        setZoom(_zoom + (e.deltaY < 0 ? 0.1 : -0.1));
+                    }
+                }, { passive: false });
+            </script>
         </head>
         <body>
             <div class="markdown-body">
@@ -167,11 +179,11 @@ public static class HtmlTemplate
 
     public static string Wrap(string bodyHtml, bool darkMode = false)
     {
-        var mermaidJs = GetMermaidJs();
+        var mermaidUri = GetMermaidJsUri();
         var mermaidTheme = darkMode ? "dark" : "default";
-        var mermaidScript = string.IsNullOrEmpty(mermaidJs)
+        var mermaidScript = string.IsNullOrEmpty(mermaidUri)
             ? ""
-            : "<script>" + mermaidJs + "</script>\n" +
+            : $"<script src=\"{mermaidUri}\"></script>\n" +
               $"<script>mermaid.initialize({{ startOnLoad: true, theme: '{mermaidTheme}', securityLevel: 'loose' }});</script>";
 
         return Template

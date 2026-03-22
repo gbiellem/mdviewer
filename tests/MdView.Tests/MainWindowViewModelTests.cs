@@ -105,23 +105,6 @@ public class MainWindowViewModelTests
     }
 
     [Fact]
-    public void DarkMode_Toggle_UpdatesHtmlContent()
-    {
-        var vm = new MainWindowViewModel();
-        var tempFile = CreateTempMarkdown("# Test");
-        vm.LoadFile(tempFile);
-
-        var lightHtml = vm.HtmlContent;
-        vm.IsDarkMode = true;
-        var darkHtml = vm.HtmlContent;
-
-        Assert.NotEqual(lightHtml, darkHtml);
-        Assert.Contains("#1e1e1e", darkHtml);
-        Assert.Contains("#ffffff", lightHtml);
-        File.Delete(tempFile);
-    }
-
-    [Fact]
     public void LoadFile_WithMermaid_ContainsMermaidInHtml()
     {
         var md = "# Test\n\n```mermaid\nflowchart TD\n    A-->B\n```";
@@ -156,13 +139,6 @@ public class MainWindowViewModelTests
         vm.LoadFromArgs(["--flag", "/nonexistent.md"]);
 
         Assert.False(vm.HasFile);
-    }
-
-    [Fact]
-    public void IsXpsAvailable_MatchesPlatform()
-    {
-        var vm = new MainWindowViewModel();
-        Assert.Equal(OperatingSystem.IsWindows(), vm.IsXpsAvailable);
     }
 
     private static string CreateTempMarkdown(string content)
