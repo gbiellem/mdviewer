@@ -1,0 +1,134 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="520"
+        x:Class="MdView.Views.AboutWindow"
+        Title="About MdView"
+        Width="480" Height="680"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        SystemDecorations="Full">
+
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="16">
+            <!-- App Identity -->
+            <StackPanel Spacing="4" HorizontalAlignment="Center">
+                <Image Source="/Assets/mdview-icon.png" Width="96" Height="96"
+                       HorizontalAlignment="Center" Margin="0,0,0,8" />
+                <TextBlock Text="MdView" FontSize="28" FontWeight="SemiBold"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="Version 1.0.0" FontSize="13" Opacity="0.6"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="A cross-platform Markdown viewer with Mermaid diagram support."
+                           FontSize="13" Opacity="0.8" TextWrapping="Wrap"
+                           HorizontalAlignment="Center" TextAlignment="Center"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+
+            <Separator Margin="0,4" />
+
+            <!-- Open Source Licenses -->
+            <StackPanel Spacing="10">
+                <TextBlock Text="Open Source Licenses" FontSize="15" FontWeight="SemiBold" />
+
+                <!-- Avalonia -->
+                <StackPanel Spacing="2">
+                    <TextBlock Text="Avalonia UI" FontWeight="Medium" FontSize="13" />
+                    <TextBlock Text="MIT License - Copyright (c) Avalonia Team"
+                               FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="Cross-platform .NET UI framework"
+                               FontSize="11" Opacity="0.5" />
+                </StackPanel>
+
+                <!-- Avalonia.Controls.WebView -->
+                <StackPanel Spacing="2">
+                    <TextBlock Text="Avalonia.Controls.WebView" FontWeight="Medium" FontSize="13" />
+                    <TextBlock Text="MIT License - Copyright (c) Avalonia Team"
+                               FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="Native WebView control for Avalonia"
+                               FontSize="11" Opacity="0.5" />
+                </StackPanel>
+
+                <!-- FluentAvaloniaUI -->
+                <StackPanel Spacing="2">
+                    <TextBlock Text="FluentAvaloniaUI" FontWeight="Medium" FontSize="13" />
+                    <TextBlock Text="MIT License - Copyright (c) amwx"
+                               FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="Fluent Design theme for Avalonia"
+                               FontSize="11" Opacity="0.5" />
+                </StackPanel>
+
+                <!-- Markdig -->
+                <StackPanel Spacing="2">
+                    <TextBlock Text="Markdig" FontWeight="Medium" FontSize="13" />
+                    <TextBlock Text="BSD 2-Clause License - Copyright (c) Alexandre Mutel"
+                               FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="Markdown processing library for .NET"
+                               FontSize="11" Opacity="0.5" />
+                </StackPanel>
+
+                <!-- CommunityToolkit.Mvvm -->
+                <StackPanel Spacing="2">
+                    <TextBlock Text="CommunityToolkit.Mvvm" FontWeight="Medium" FontSize="13" />
+                    <TextBlock Text="MIT License - Copyright (c) .NET Foundation"
+                               FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="MVVM toolkit for .NET"
+                               FontSize="11" Opacity="0.5" />
+                </StackPanel>
+
+                <!-- SkiaSharp -->
+                <StackPanel Spacing="2">
+                    <TextBlock Text="SkiaSharp" FontWeight="Medium" FontSize="13" />
+                    <TextBlock Text="MIT License - Copyright (c) Microsoft Corporation"
+                               FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="2D graphics library (Avalonia rendering backend)"
+                               FontSize="11" Opacity="0.5" />
+                </StackPanel>
+
+                <!-- HarfBuzzSharp -->
+                <StackPanel Spacing="2">
+                    <TextBlock Text="HarfBuzzSharp" FontWeight="Medium" FontSize="13" />
+                    <TextBlock Text="MIT License - Copyright (c) Microsoft Corporation"
+                               FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="Text shaping engine"
+                               FontSize="11" Opacity="0.5" />
+                </StackPanel>
+
+                <!-- Inter Font -->
+                <StackPanel Spacing="2">
+                    <TextBlock Text="Inter Font" FontWeight="Medium" FontSize="13" />
+                    <TextBlock Text="SIL Open Font License 1.1 - Copyright (c) Rasmus Andersson"
+                               FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="UI typeface (via Avalonia.Fonts.Inter)"
+                               FontSize="11" Opacity="0.5" />
+                </StackPanel>
+
+                <!-- MicroCom -->
+                <StackPanel Spacing="2">
+                    <TextBlock Text="MicroCom.Runtime" FontWeight="Medium" FontSize="13" />
+                    <TextBlock Text="MIT License - Copyright (c) Avalonia Team"
+                               FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="COM interop runtime"
+                               FontSize="11" Opacity="0.5" />
+                </StackPanel>
+
+                <!-- Mermaid.js -->
+                <StackPanel Spacing="2">
+                    <TextBlock Text="Mermaid.js" FontWeight="Medium" FontSize="13" />
+                    <TextBlock Text="MIT License - Copyright (c) Knut Sveidqvist"
+                               FontSize="12" Opacity="0.7" TextWrapping="Wrap" />
+                    <TextBlock Text="Diagram and chart rendering"
+                               FontSize="11" Opacity="0.5" />
+                </StackPanel>
+            </StackPanel>
+
+            <Separator Margin="0,4" />
+
+            <Button Content="Close" Click="OnCloseClick"
+                    HorizontalAlignment="Center"
+                    Padding="24,6" />
+        </StackPanel>
+    </ScrollViewer>
+</Window>

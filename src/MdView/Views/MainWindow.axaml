@@ -1,0 +1,73 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:MdView.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
+        x:Class="MdView.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/mdview-icon.ico"
+        Title="{Binding WindowTitle}"
+        Width="1000" Height="700"
+        MinWidth="400" MinHeight="300"
+        DragDrop.AllowDrop="True">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <!-- macOS native menu bar -->
+    <NativeMenu.Menu>
+        <NativeMenu>
+            <NativeMenuItem Header="File">
+                <NativeMenu>
+                    <NativeMenuItem Header="Open..." Click="OnNativeOpenClick" Gesture="Cmd+O" />
+                    <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="Export to PDF..." Click="OnNativeExportPdfClick" Gesture="Cmd+E" />
+                </NativeMenu>
+            </NativeMenuItem>
+        </NativeMenu>
+    </NativeMenu.Menu>
+
+    <DockPanel>
+        <!-- In-window menu bar (shown on Windows, hidden on macOS via code-behind) -->
+        <Menu DockPanel.Dock="Top" x:Name="WindowMenu">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open..." Click="OnOpenClick"
+                          InputGesture="Ctrl+O" />
+                <Separator />
+                <MenuItem Header="Export to _PDF..." Click="OnExportPdfClick"
+                          IsEnabled="{Binding HasFile}" />
+                <MenuItem Header="Export to _XPS..." Click="OnExportXpsClick"
+                          IsEnabled="{Binding HasFile}"
+                          IsVisible="{Binding IsXpsAvailable}" />
+                <Separator />
+                <MenuItem Header="E_xit" Click="OnExitClick" />
+            </MenuItem>
+            <MenuItem Header="_View">
+                <MenuItem Header="_Dark Mode" Click="OnToggleDarkMode" />
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About MdView" Click="OnAboutClick" />
+            </MenuItem>
+        </Menu>
+
+        <!-- Status Bar -->
+        <Border DockPanel.Dock="Bottom" Padding="8,4" Height="28"
+                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0" Text="{Binding StatusText}"
+                           VerticalAlignment="Center" FontSize="12" />
+                <ProgressBar Grid.Column="1" IsIndeterminate="True"
+                             IsVisible="{Binding IsExporting}"
+                             Width="100" Height="4"
+                             VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+        <!-- WebView always visible - shows welcome page or markdown content -->
+        <NativeWebView x:Name="WebView"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch" />
+    </DockPanel>
+</Window>
