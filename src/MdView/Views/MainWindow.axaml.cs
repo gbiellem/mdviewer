@@ -175,6 +175,32 @@ public partial class MainWindow : Window
         }
     }
 
+    // --- Editor handlers ---
+
+    private void OnOpenInEditorClick(object? sender, RoutedEventArgs e) => OpenInEditor();
+
+    private void OnNativeOpenInEditorClick(object? sender, EventArgs e) => OpenInEditor();
+
+    private void OpenInEditor()
+    {
+        if (DataContext is not MainWindowViewModel vm || !vm.HasFile) return;
+
+        var defaultPath = PreferencesService.Instance.DefaultEditorPath;
+        if (defaultPath != null && (File.Exists(defaultPath) || Directory.Exists(defaultPath)))
+        {
+            EditorDetectionService.LaunchEditor(defaultPath, vm.CurrentFilePath);
+            vm.StatusText = "Opened in editor";
+        }
+        else
+        {
+            if (defaultPath != null)
+                PreferencesService.Instance.DefaultEditorPath = null;
+            vm.StatusText = "No default editor set. Use Settings > Set Default Editor.";
+        }
+    }
+
+    private void OnPreferencesClick(object? sender, RoutedEventArgs e) => App.ShowPreferencesWindow();
+
     // --- Other handlers ---
 
     private void OnAboutClick(object? sender, RoutedEventArgs e) => App.ShowAboutWindow();

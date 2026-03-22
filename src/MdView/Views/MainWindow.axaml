@@ -22,6 +22,7 @@
             <NativeMenuItem Header="File">
                 <NativeMenu>
                     <NativeMenuItem Header="Open..." Click="OnNativeOpenClick" Gesture="Cmd+O" />
+                    <NativeMenuItem Header="Open in Editor" Click="OnNativeOpenInEditorClick" Gesture="Cmd+Shift+E" />
                     <NativeMenuItemSeparator />
                     <NativeMenuItem Header="Export to PDF..." Click="OnNativeExportPdfClick" Gesture="Cmd+E" />
                 </NativeMenu>
@@ -35,6 +36,9 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Open..." Click="OnOpenClick"
                           InputGesture="Ctrl+O" />
+                <MenuItem Header="Open in _Editor" Click="OnOpenInEditorClick"
+                          IsEnabled="{Binding HasFile}"
+                          InputGesture="Ctrl+Shift+E" />
                 <Separator />
                 <MenuItem Header="Export to _PDF..." Click="OnExportPdfClick"
                           IsEnabled="{Binding HasFile}" />
@@ -43,6 +47,9 @@
                           IsVisible="{Binding IsXpsAvailable}" />
                 <Separator />
                 <MenuItem Header="E_xit" Click="OnExitClick" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Header="_Settings..." Click="OnPreferencesClick" />
             </MenuItem>
             <MenuItem Header="_View">
                 <MenuItem Header="_Dark Mode" Click="OnToggleDarkMode" />
@@ -65,7 +72,7 @@
             </Grid>
         </Border>
 
-        <!-- WebView always visible - shows welcome page or markdown content -->
+        <!-- WebView always visible -->
         <NativeWebView x:Name="WebView"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Stretch" />

@@ -8,6 +8,8 @@
     <NativeMenu.Menu>
         <NativeMenu>
             <NativeMenuItem Header="About MdView" Click="OnAboutClick" />
+            <NativeMenuItemSeparator />
+            <NativeMenuItem Header="Preferences..." Click="OnPreferencesClick" Gesture="Cmd+," />
         </NativeMenu>
     </NativeMenu.Menu>
 

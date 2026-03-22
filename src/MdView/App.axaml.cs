@@ -6,6 +6,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using FluentAvalonia.Styling;
 using MdView.ViewModels;
 using MdView.Views;
@@ -22,7 +23,18 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-        Styles.Add(new FluentAvaloniaTheme());
+        var theme = new FluentAvaloniaTheme
+        {
+            PreferSystemTheme = true
+        };
+
+        // Use macOS system blue instead of FluentAvalonia's default purple
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            theme.CustomAccentColor = Color.Parse("#007AFF");
+        }
+
+        Styles.Add(theme);
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -123,6 +135,23 @@ public partial class App : Application
     }
 
     private void OnAboutClick(object? sender, EventArgs e) => ShowAboutWindow();
+
+    private void OnPreferencesClick(object? sender, EventArgs e) => ShowPreferencesWindow();
+
+    public static void ShowPreferencesWindow()
+    {
+        var prefsWindow = new PreferencesWindow();
+
+        if (Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
+            && desktop.MainWindow is not null)
+        {
+            prefsWindow.ShowDialog(desktop.MainWindow);
+        }
+        else
+        {
+            prefsWindow.Show();
+        }
+    }
 
     public static void ShowAboutWindow()
     {
