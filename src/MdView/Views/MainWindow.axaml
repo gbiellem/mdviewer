@@ -24,6 +24,7 @@
                     <NativeMenuItem Header="Open..." Click="OnNativeOpenClick" Gesture="Cmd+O" />
                     <NativeMenuItem Header="Open in Editor" Click="OnNativeOpenInEditorClick" Gesture="Cmd+Shift+E" />
                     <NativeMenuItemSeparator />
+                    <NativeMenuItem Header="Print..." Click="OnNativePrintClick" Gesture="Cmd+P" />
                     <NativeMenuItem Header="Export to PDF..." Click="OnNativeExportPdfClick" Gesture="Cmd+E" />
                 </NativeMenu>
             </NativeMenuItem>
@@ -40,11 +41,11 @@
                           IsEnabled="{Binding HasFile}"
                           InputGesture="Ctrl+Shift+E" />
                 <Separator />
+                <MenuItem Header="_Print..." Click="OnPrintClick"
+                          IsEnabled="{Binding HasFile}"
+                          InputGesture="Ctrl+P" />
                 <MenuItem Header="Export to _PDF..." Click="OnExportPdfClick"
                           IsEnabled="{Binding HasFile}" />
-                <MenuItem Header="Export to _XPS..." Click="OnExportXpsClick"
-                          IsEnabled="{Binding HasFile}"
-                          IsVisible="{Binding IsXpsAvailable}" />
                 <Separator />
                 <MenuItem Header="E_xit" Click="OnExitClick" />
             </MenuItem>

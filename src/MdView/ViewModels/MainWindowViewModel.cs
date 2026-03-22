@@ -27,9 +27,6 @@ public partial class MainWindowViewModel : ViewModelBase
     private bool _hasFile;
 
     [ObservableProperty]
-    private bool _isXpsAvailable = OperatingSystem.IsWindows();
-
-    [ObservableProperty]
     private bool _isDarkMode;
 
     private string _currentMarkdown = string.Empty;
@@ -37,6 +34,24 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel()
     {
         _fileWatcher.FileChanged += OnFileChanged;
+        ShowWelcomePage();
+    }
+
+    private void ShowWelcomePage()
+    {
+        var shortcut = OperatingSystem.IsMacOS() ? "⌘O" : "Ctrl+O";
+        var welcomeHtml = $"""
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;
+                        min-height:60vh; text-align:center; opacity:0.6;">
+                <div style="font-size:48px; margin-bottom:16px;">📄</div>
+                <h2 style="border:none; margin:0 0 8px;">Welcome to MdView</h2>
+                <p style="margin:0;">Open a Markdown file to get started</p>
+                <p style="margin:8px 0 0; font-size:13px;">
+                    Press <strong>{shortcut}</strong> or drag and drop a <code>.md</code> file
+                </p>
+            </div>
+            """;
+        HtmlContent = HtmlTemplate.Wrap(welcomeHtml, IsDarkMode);
     }
 
     public void LoadFile(string filePath)
@@ -80,6 +95,8 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (!string.IsNullOrEmpty(_currentMarkdown))
             RenderMarkdown();
+        else
+            ShowWelcomePage();
     }
 
     public void LoadFromArgs(string[] args)

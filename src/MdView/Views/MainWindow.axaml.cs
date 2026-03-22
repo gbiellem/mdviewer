@@ -101,6 +101,21 @@ public partial class MainWindow : Window
         }
     }
 
+    // --- Print handler ---
+
+    private void OnPrintClick(object? sender, RoutedEventArgs e) => PrintContent();
+
+    private void OnNativePrintClick(object? sender, EventArgs e) => PrintContent();
+
+    private void PrintContent()
+    {
+        if (DataContext is not MainWindowViewModel vm || !vm.HasFile) return;
+        if (_webViewReady)
+        {
+            WebView.ShowPrintUI();
+        }
+    }
+
     // --- Export handlers ---
 
     private async void OnExportPdfClick(object? sender, RoutedEventArgs e) => await ExportPdfAsync();
@@ -130,40 +145,6 @@ public partial class MainWindow : Window
         {
             var progress = new Progress<string>(msg => vm.StatusText = msg);
             await ExportService.ExportToPdfAsync(WebView, file.Path.LocalPath, progress);
-        }
-        catch (Exception ex)
-        {
-            vm.StatusText = $"Export failed: {ex.Message}";
-        }
-        finally
-        {
-            vm.IsExporting = false;
-        }
-    }
-
-    private async void OnExportXpsClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is not MainWindowViewModel vm || !vm.HasFile) return;
-
-        var defaultName = Path.GetFileNameWithoutExtension(vm.CurrentFilePath) + ".xps";
-        var file = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
-        {
-            Title = "Export to XPS",
-            SuggestedFileName = defaultName,
-            DefaultExtension = "xps",
-            FileTypeChoices =
-            [
-                new FilePickerFileType("XPS Documents") { Patterns = ["*.xps"] }
-            ]
-        });
-
-        if (file == null) return;
-
-        vm.IsExporting = true;
-        try
-        {
-            var progress = new Progress<string>(msg => vm.StatusText = msg);
-            await ExportService.ExportToXpsAsync(WebView, file.Path.LocalPath, progress);
         }
         catch (Exception ex)
         {
