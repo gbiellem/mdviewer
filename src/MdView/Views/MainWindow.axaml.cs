@@ -37,6 +37,16 @@ public partial class MainWindow : Window
             KeyBindings.Add(new KeyBinding { Gesture = new KeyGesture(Key.D0, KeyModifiers.Meta), Command = new ActionCommand(ResetZoom) });
         }
 
+        WebView.EnvironmentRequested += (_, args) =>
+        {
+            if (args is Avalonia.Platform.WindowsWebView2EnvironmentRequestedEventArgs webView2)
+            {
+                webView2.UserDataFolder = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "MdView", "WebView2");
+            }
+        };
+
         WebView.AdapterCreated += (_, _) =>
         {
             _webViewReady = true;
