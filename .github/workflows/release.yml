@@ -76,6 +76,8 @@ jobs:
             --self-contained true `
             -p:PublishTrimmed=true `
             -p:TrimMode=link `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
             -o out
 
       - name: Create zip
