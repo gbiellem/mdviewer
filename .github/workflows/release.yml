@@ -42,6 +42,9 @@ jobs:
           cp packaging/macos/MdView.app/Contents/Resources/mdview-icon.icns "$APP/Contents/Resources/"
           cp -R out/* "$APP/Contents/MacOS/"
 
+          # Ad-hoc sign so macOS doesn't flag as damaged
+          codesign --force --deep --sign - "$APP"
+
           # Create zip preserving symlinks and permissions
           zip -ry "MdView-${{ matrix.rid }}.zip" "$APP"
 

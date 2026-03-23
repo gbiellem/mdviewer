@@ -1,3 +1,4 @@
+using System.Reflection;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -13,6 +14,7 @@ public partial class App : Application
     private MainWindowViewModel? _vm;
     private string? _pendingFilePath;
     private bool _windowReady;
+    private static IActivatableLifetime? _activatableLifetime;
 
     public override void Initialize()
     {
@@ -43,9 +45,14 @@ public partial class App : Application
             }
 
             // Handle macOS "Open With" / Finder file activation events
+            // _activatableLifetime is set in RegisterActivatableLifetime() called from AfterSetup
             if (desktop is IActivatableLifetime activatable)
             {
                 activatable.Activated += OnActivated;
+            }
+            else if (_activatableLifetime != null)
+            {
+                _activatableLifetime.Activated += OnActivated;
             }
         }
 
@@ -131,6 +138,44 @@ public partial class App : Application
         else
         {
             aboutWindow.Show();
+        }
+    }
+
+    /// <summary>
+    /// Called from AfterSetup in Program.cs, after the native platform is fully initialized.
+    /// At this point AvaloniaLocator has the IActivatableLifetime registered.
+    /// </summary>
+    /// <summary>
+    /// Called from AfterSetup in Program.cs, after the native platform is fully initialized.
+    /// In Avalonia 12, IActivatableLifetime is registered in AvaloniaLocator by the native
+    /// platform but is no longer on the desktop lifetime. We retrieve it via reflection since
+    /// AvaloniaLocator is internal.
+    /// </summary>
+    public static void RegisterActivatableLifetime()
+    {
+        try
+        {
+            Type? locatorType = null;
+            foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                locatorType = asm.GetType("Avalonia.AvaloniaLocator");
+                if (locatorType != null) break;
+            }
+            if (locatorType == null) return;
+
+            var currentProp = locatorType.GetProperty("Current",
+                BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            var locator = currentProp?.GetValue(null);
+            if (locator == null) return;
+
+            var getService = locator.GetType().GetMethod("GetService",
+                BindingFlags.Instance | BindingFlags.Public, null, [typeof(Type)], null);
+
+            _activatableLifetime = getService?.Invoke(locator, [typeof(IActivatableLifetime)])
+                as IActivatableLifetime;
+        }
+        catch
+        {
         }
     }
 
