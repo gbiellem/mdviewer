@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 using MdView.Services;
 
 namespace MdView.Views;
@@ -19,8 +21,7 @@ public partial class PreferencesWindow : Window
         var path = PreferencesService.Instance.DefaultEditorPath;
         if (path != null && (File.Exists(path) || Directory.Exists(path)))
         {
-            // Get the editor name and icon
-            _ = LoadEditorInfoAsync(path);
+            EditorName.Text = GetEditorDisplayName(path);
             ClearButton.IsVisible = true;
         }
         else
@@ -34,23 +35,31 @@ public partial class PreferencesWindow : Window
         }
     }
 
-    private async Task LoadEditorInfoAsync(string path)
+    private static string GetEditorDisplayName(string path)
     {
-        var editors = await EditorDetectionService.DetectEditorsAsync();
-        var match = editors.FirstOrDefault(e => e.ExecutablePath == path);
-        if (match != null)
+        if (OperatingSystem.IsWindows() && File.Exists(path))
         {
-            EditorName.Text = match.Name;
-            EditorIcon.Source = match.Icon;
+            var info = FileVersionInfo.GetVersionInfo(path);
+            if (!string.IsNullOrEmpty(info.FileDescription))
+                return info.FileDescription;
         }
-        else
-        {
-            EditorName.Text = Path.GetFileNameWithoutExtension(path);
-            EditorIcon.Source = null;
-        }
+
+        return Path.GetFileNameWithoutExtension(path);
     }
 
     private async void OnChangeClick(object? sender, RoutedEventArgs e)
+    {
+        if (OperatingSystem.IsMacOS())
+        {
+            await PickEditorFromListAsync();
+        }
+        else
+        {
+            await BrowseForEditorAsync();
+        }
+    }
+
+    private async Task PickEditorFromListAsync()
     {
         var picker = new EditorPickerWindow();
         _ = picker.LoadEditorsAsync();
@@ -61,6 +70,29 @@ public partial class PreferencesWindow : Window
             PreferencesService.Instance.DefaultEditorPath = picker.SelectedEditor.ExecutablePath;
             EditorName.Text = picker.SelectedEditor.Name;
             EditorIcon.Source = picker.SelectedEditor.Icon;
+            ClearButton.IsVisible = true;
+        }
+    }
+
+    private async Task BrowseForEditorAsync()
+    {
+        var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Select Editor",
+            AllowMultiple = false,
+            FileTypeFilter =
+            [
+                new FilePickerFileType("Applications") { Patterns = ["*.exe"] },
+                FilePickerFileTypes.All
+            ]
+        });
+
+        if (files.Count > 0)
+        {
+            var path = files[0].Path.LocalPath;
+            PreferencesService.Instance.DefaultEditorPath = path;
+            EditorName.Text = GetEditorDisplayName(path);
+            EditorIcon.Source = null;
             ClearButton.IsVisible = true;
         }
     }

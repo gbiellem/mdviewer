@@ -16,6 +16,11 @@
     <Content Include="Assets\mermaid.min.js" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
+  <!-- Exclude native PDBs from publish output -->
+  <Target Name="RemoveNativePdbs" AfterTargets="Publish">
+    <Delete Files="$(PublishDir)libHarfBuzzSharp.pdb;$(PublishDir)libSkiaSharp.pdb" />
+  </Target>
+
   <ItemGroup>
     <!-- Avalonia UI -->
     <PackageReference Include="Avalonia" Version="12.0.0-rc1" />

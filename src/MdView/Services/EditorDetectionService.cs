@@ -7,33 +7,13 @@ namespace MdView.Services;
 
 public static class EditorDetectionService
 {
-    // Windows fallback: hardcoded known editors
-    private static readonly (string Name, string[] Paths)[] KnownWindowsEditors =
-    [
-        ("Visual Studio Code", [
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Microsoft VS Code", "Code.exe"),
-            @"C:\Program Files\Microsoft VS Code\Code.exe"
-        ]),
-        ("Cursor", [
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "cursor", "Cursor.exe")
-        ]),
-        ("Sublime Text", [
-            @"C:\Program Files\Sublime Text\sublime_text.exe",
-            @"C:\Program Files\Sublime Text 3\sublime_text.exe"
-        ]),
-        ("Notepad++", [
-            @"C:\Program Files\Notepad++\notepad++.exe",
-            @"C:\Program Files (x86)\Notepad++\notepad++.exe"
-        ]),
-        ("Notepad", ["notepad.exe"]),
-    ];
 
     public static async Task<List<EditorInfo>> DetectEditorsAsync()
     {
         if (OperatingSystem.IsMacOS())
             return await DetectMacEditorsAsync();
 
-        return await DetectWindowsEditorsAsync();
+        return [];
     }
 
     public static void LaunchEditor(string editorPath, string filePath)
@@ -323,31 +303,4 @@ public static class EditorDetectionService
         return null;
     }
 
-    // --- Windows ---
-
-    private static async Task<List<EditorInfo>> DetectWindowsEditorsAsync()
-    {
-        var editors = new List<EditorInfo>();
-
-        await Task.Run(() =>
-        {
-            foreach (var (name, paths) in KnownWindowsEditors)
-            {
-                foreach (var path in paths)
-                {
-                    if (File.Exists(path))
-                    {
-                        editors.Add(new EditorInfo
-                        {
-                            Name = name,
-                            ExecutablePath = path
-                        });
-                        break;
-                    }
-                }
-            }
-        });
-
-        return editors;
-    }
 }
