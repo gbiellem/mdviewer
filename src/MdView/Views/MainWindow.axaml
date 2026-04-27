@@ -43,14 +43,14 @@
         <Menu DockPanel.Dock="Top" x:Name="WindowMenu">
             <MenuItem Header="_File">
                 <MenuItem Header="_Open..." Click="OnOpenClick"
-                          HotKey="Ctrl+O" InputGesture="Ctrl+O" />
+                          HotKey="Ctrl+O" />
                 <MenuItem Header="Open in _Editor" Click="OnOpenInEditorClick"
                           IsEnabled="{Binding HasFile}"
-                          HotKey="Ctrl+Shift+E" InputGesture="Ctrl+Shift+E" />
+                          HotKey="Ctrl+Shift+E" />
                 <Separator />
                 <MenuItem Header="_Print..." Click="OnPrintClick"
                           IsEnabled="{Binding HasFile}"
-                          HotKey="Ctrl+P" InputGesture="Ctrl+P" />
+                          HotKey="Ctrl+P" />
                 <MenuItem Header="Export to _PDF..." Click="OnExportPdfClick"
                           IsEnabled="{Binding HasFile}" />
                 <Separator />
@@ -61,11 +61,11 @@
             </MenuItem>
             <MenuItem Header="_View">
                 <MenuItem Header="Zoom _In" Click="OnZoomIn"
-                          HotKey="Ctrl+OemPlus" InputGesture="Ctrl+OemPlus" />
+                          HotKey="Ctrl+OemPlus" />
                 <MenuItem Header="Zoom _Out" Click="OnZoomOut"
-                          HotKey="Ctrl+OemMinus" InputGesture="Ctrl+OemMinus" />
+                          HotKey="Ctrl+OemMinus" />
                 <MenuItem Header="_Reset Zoom" Click="OnZoomReset"
-                          HotKey="Ctrl+D0" InputGesture="Ctrl+D0" />
+                          HotKey="Ctrl+D0" />
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="_About MdView" Click="OnAboutClick" />
@@ -74,7 +74,7 @@
 
         <!-- Status Bar -->
         <Border DockPanel.Dock="Bottom" Padding="8,4" Height="28"
-                Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+                Background="{DynamicResource SolidBackgroundFillColorSecondaryBrush}">
             <Grid ColumnDefinitions="*,Auto">
                 <TextBlock Grid.Column="0" Text="{Binding StatusText}"
                            VerticalAlignment="Center" FontSize="12" />

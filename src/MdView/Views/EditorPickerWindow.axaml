@@ -19,12 +19,12 @@
             <Setter Property="Margin" Value="0,1" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Template">
-                <ControlTemplate>
+                <ControlTemplate TargetType="ListBoxItem">
                     <Border Background="{TemplateBinding Background}"
-                            CornerRadius="6"
-                            Padding="{TemplateBinding Padding}">
+                            CornerRadius="6">
                         <ContentPresenter Content="{TemplateBinding Content}"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Padding="{TemplateBinding Padding}"
                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
@@ -32,18 +32,18 @@
             </Setter>
 
             <Style Selector="^:pointerover">
-                <Setter Property="Background" Value="{DynamicResource SystemControlHighlightListLowBrush}" />
+                <Setter Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
             </Style>
             <Style Selector="^:selected">
-                <Setter Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                <Setter Property="Background" Value="{DynamicResource SystemAccentColorBrush}" />
                 <Setter Property="Foreground" Value="White" />
             </Style>
             <Style Selector="^:selected:pointerover">
-                <Setter Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                <Setter Property="Background" Value="{DynamicResource SystemAccentColorBrush}" />
                 <Setter Property="Foreground" Value="White" />
             </Style>
             <Style Selector="^:selected:pressed">
-                <Setter Property="Background" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                <Setter Property="Background" Value="{DynamicResource SystemAccentColorBrush}" />
                 <Setter Property="Foreground" Value="White" />
             </Style>
         </ControlTheme>
